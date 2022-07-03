@@ -1,167 +1,85 @@
-import * as THREE from "/node_modules/three/build/three.module.js";
+import * as THREE from "./node_modules/three/build/three.module.js";
+// import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls.js";
+// import { GLTFLoader } from "./node_modules/three/examples/jsm/loaders/GLTFLoader.js";
 console.log("im working");
+const container = document.querySelector("#scene-container");
+//camera
+const fov = 35;
+const aspect = container.clientWidth / container.clientHeight;
+const near = 0.1; //near clipping plane anything closer is invisible
+const far = 100; //far clipping plane anything further is invisible
+
+//mesh
+const length = 2;
+const width = 2;
+const depth = 2;
+
+const geometry = new THREE.BoxBufferGeometry(length, width, depth);
+const material = new THREE.MeshBasicMaterial();
+
+const cube = new THREE.Mesh(geometry, material);
+
+const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+camera.position.set(0, 0, 10); //x,y,z
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+
 const scene = new THREE.Scene();
 
-const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
-const playerCar = Car();
-scene.add(playerCar);
+scene.add(cube);
+scene.background = new THREE.Color("skyblue");
 
-//LIGHTS
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambientLight);
-
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-dirLight.position.set(100, -300, 400); //x,y,z
-scene.add(dirLight);
-
-//CAMERA
-const aspectRatio = window.innerWidth / window.innerHeight;
-const cameraWidth = 960;
-const cameraHeight = cameraWidth / aspectRatio;
-
-const camera = new THREE.OrthographicCamera(
-  cameraWidth / -2, //left
-  cameraWidth / 2, //right
-  cameraHeight / 2, //top
-  cameraHeight / -2, //bottom
-  0, // near plane
-  1000 //far plane
-);
-camera.position.set(0, 0, 300);
-// camera.up.set(0, 0, 1);
-camera.lookAt(0, 0, 0);
-
-// renderMap(cameraWidth, cameraHeight * 2);
-
-//Set up renederer
-
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.render(scene, camera);
-document.body.appendChild(renderer.domElement);
+container.append(renderer.domElement);
 
-function Car() {
-  const car = new THREE.Group();
+// import { BoxBufferGeometry, Color, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 
-  const backWheel = Wheel();
-  backWheel.position.x = -18;
-  car.add(backWheel);
+// // Get a reference to the container element that will hold our scene
+// const container = document.querySelector("#scene-container");
 
-  const frontWheel = Wheel();
-  frontWheel.position.x = 18;
-  car.add(frontWheel);
+// // create a Scene
+// const scene = new Scene();
 
-  const main = new THREE.Mesh(new THREE.BoxBufferGeometry(60, 30, 15), new THREE.MeshLambertMaterial({ color: pickRandom(vehicleColors) }));
-  main.position.z = 12;
-  car.add(main);
+// // Set the background color
+// scene.background = new Color("skyblue");
 
-  //cabin texture
-  const carFrontTexture = getCarFrontTexture();
-  carFrontTexture.center = new THREE.Vector2(0.5, 0.5);
-  carFrontTexture.rotation = Math.PI / 2;
+// // Create a camera
+// const fov = 35; // AKA Field of View
+// const aspect = container.clientWidth / container.clientHeight;
+// const near = 0.1; // the near clipping plane
+// const far = 100; // the far clipping plane
 
-  const carBackTexture = getCarFrontTexture();
-  carBackTexture.center = new THREE.Vector2(0.5, 0.5);
-  carBackTexture.rotation = -Math.PI / 2;
+// const camera = new PerspectiveCamera(fov, aspect, near, far);
 
-  const carRightSideTexture = getCarSideTexture();
-  const carLeftSideTexture = getCarSideTexture();
-  carLeftSideTexture.flipY = false;
+// // every object is initially created at ( 0, 0, 0 )
+// // move the camera back so we can view the scene
+// camera.position.set(0, 0, 10);
 
-  //cabin
-  const cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(33, 24, 12), [
-    new THREE.MeshLambertMaterial({ map: carFrontTexture }),
-    new THREE.MeshLambertMaterial({ map: carBackTexture }),
-    new THREE.MeshLambertMaterial({ map: carLeftSideTexture }),
-    new THREE.MeshLambertMaterial({ map: carRightSideTexture }),
-    new THREE.MeshLambertMaterial({ color: 0xffffff }), //top
-    new THREE.MeshLambertMaterial({ color: 0xffffff }), //bottom
-  ]);
-  cabin.position.x = -6;
-  cabin.position.z = 25.5;
-  car.add(cabin);
-  return car;
-}
-function Wheel() {
-  const wheel = new THREE.Mesh(new THREE.BoxBufferGeometry(12, 33, 12), new THREE.MeshLambertMaterial({ color: 0x333333 }));
-  wheel.position.z = 6;
-  return wheel;
-}
+// // create a geometry
+// const geometry = new BoxBufferGeometry(2, 2, 2);
 
-function pickRandom(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
+// // create a default (white) Basic material
+// const material = new MeshBasicMaterial();
 
-// Textures made from canvas elements
-function getCarFrontTexture() {
-  const canvas = document.createElement("canvas");
-  canvas.width = 64;
-  canvas.height = 32;
-  const context = canvas.getContext("2d");
+// // create a Mesh containing the geometry and material
+// const cube = new Mesh(geometry, material);
 
-  context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, 64, 32);
+// // add the mesh to the scene
+// scene.add(cube);
 
-  context.fillStyle = "#666666";
-  context.fillRect(8, 8, 48, 24); //
+// // create the renderer
+// const renderer = new WebGLRenderer();
 
-  return new THREE.CanvasTexture(canvas);
-}
+// // next, set the renderer to the same size as our container element
+// renderer.setSize(container.clientWidth, container.clientHeight);
 
-function getCarSideTexture() {
-  const canvas = document.createElement("canvas");
-  canvas.width = 128;
-  canvas.height = 32;
-  const context = canvas.getContext("2d");
+// // finally, set the pixel ratio so that our scene will look good on HiDPI displays
+// renderer.setPixelRatio(window.devicePixelRatio);
 
-  context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, 128, 32);
+// // add the automatically created <canvas> element to the page
+// container.append(renderer.domElement);
 
-  context.fillStyle = "#666666";
-  context.fillRect(10, 8, 38, 24);
-  context.fillRect(58, 8, 60, 24);
-
-  return new THREE.CanvasTexture(canvas);
-}
-
-//Track Stuff
-
-const trackRadius = 255;
-const trackWidth = 45;
-const innerTrackRadius = trackRadius - trackWidth;
-const outerTrackRadius = trackRadius + trackWidth;
-
-const arcAngle1 = (1 / 3) * Math.PI; // 60 degrees
-
-const deltaY = Math.sin(arcAngle1) + innerTrackRadius;
-const arcAngle2 = Math.asin(deltaY / outerTrackRadius);
-
-const arcCenterX = Math.cos(arcAngle1) * innerTrackRadius + Math.cos(arcAngle2) * outerTrackRadius;
-
-const arcAngle3 = Math.acos(arcCenterX / innerTrackRadius);
-
-const arcAngle4 = Math.acos(arcCenterX / outerTrackRadius);
-
-function renderMap(mapWidth, mapHeight) {
-  //Plane with line markings
-  const lineMarkingTexture = getLineMarkings(mapWidth, mapHeight);
-
-  const planeGeometry = new THREE.PlaneBufferGeometry(mapWidth, mapHeight);
-  const planeMaterial = new THREE.MeshLambertMaterial({ color: 0x546e90, map: lineMarkingTexture });
-  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  scene.add(plane);
-
-  //Extrude geo
-  const islandLeft = getLeftIsland();
-  const islandRight = getRightIsland();
-  const islandMiddle = getMiddleIsland();
-  const outerField = getOuterField(mapWidth, mapHeight);
-
-  const fieldGeometry = new THREE.ExtrudeBufferGeometry([islandLeft, islandMiddle, islandRight, outerField], { depth: 6, bevelEnabled: false });
-
-  const fieldMesh = new THREE.Mesh(fieldGeometry, [
-    new THREE.MeshLambertMaterial({ color: 0x67c240 }),
-    new THREE.MeshLambertMaterial({ color: 0x23311c }),
-  ]);
-  scene.add(fieldMesh);
-}
+// // render, or 'create a still image', of the scene
+// renderer.render(scene, camera);
