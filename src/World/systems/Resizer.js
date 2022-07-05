@@ -1,16 +1,23 @@
+const setSize = (container, camera, renderer) => {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  //   camera.aspect = 64 / 256;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  //   renderer.setSize(64, 256);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  //   renderer.setPixelRatio(7);
+};
+
 class Resizer {
   constructor(container, camera, renderer) {
-    //set cameras aspect ratio
-    camera.aspect = container.clientWidth / container.clientHeight;
-
-    //update the cameras frustum
-    camera.updateProjectionMatrix();
-
-    //update the size of the renderer and the canvas
-    renderer.setSize(container.clientWidth, container.clientHeight);
-
-    //set the pixel ratio for mobile devices
-    renderer.setPixelRatio(window.PixelRatio);
+    //set inital size on load
+    setSize(container, camera, renderer);
+    window.addEventListener("resize", () => {
+      setSize(container, camera, renderer);
+      this.onResize();
+    });
   }
+  onResize() {}
 }
 export { Resizer };

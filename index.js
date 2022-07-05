@@ -6,7 +6,7 @@ function main() {
 
   const world = new World(container);
 
-  world.render();
+  world.start();
 }
 const renderBtn = document.querySelector("#render");
 renderBtn.addEventListener("click", () => {
