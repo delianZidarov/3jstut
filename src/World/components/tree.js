@@ -24,16 +24,18 @@ function createTree(x = 0, y = 0, z = 0) {
   tree.position.set(x, y, z);
   let scalar = 1;
   let direction = 1;
+
   tree.tick = (delta) => {
+    console.log(scalar);
     scalar += 0.1 * delta * direction;
     if (scalar < 2.5) {
       tree.position.set(x, y + scalar / 6, z);
       tree.scale.set(scalar + 0.01, scalar, scalar);
     }
-    if (scalar >= 2.5) {
+    if (scalar > 2.5) {
       direction = -1;
     }
-    if (scalar <= 1) {
+    if (scalar < 1) {
       direction = 1;
     }
   };

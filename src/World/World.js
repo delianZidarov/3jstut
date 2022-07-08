@@ -1,9 +1,11 @@
 import { createCamera } from "./components/camera.js";
-import { createCube } from "./components/cube.js";
+import { createMeshGroup } from "./components/meshGroup.js";
 import { createScene } from "./components/scene.js";
 import { createTree } from "./components/tree.js";
 import { createLights } from "./components/lights.js";
+import { Train } from "./components/Train/Train.js";
 
+import { createControls } from "./systems/controls.js";
 import { createRenderer } from "./systems/renderer.js";
 import { Resizer } from "./systems/Resizer.js";
 import { Loop } from "./systems/Loop.js";
@@ -21,15 +23,22 @@ class World {
     loop = new Loop(camera, scene, renderer);
     container.append(renderer.domElement);
 
-    const cube = createCube(0, 0, 0);
+    const controls = createControls(camera, renderer.domElement);
+
+    const group = createMeshGroup();
 
     const tree = createTree(-2, -2.5, 0);
 
-    const light = createLights();
+    const train = new Train();
 
-    loop.updatables.push(cube, tree);
+    const { mainLight, ambientLight } = createLights();
 
-    scene.add(cube, tree, light);
+    loop.updatables.push(train, controls);
+
+    scene.add(train, mainLight, ambientLight);
+
+    // controls.target.copy(tree.position);
+    controls.enableDamping = true;
 
     const resizer = new Resizer(container, camera, renderer);
     // resizer.onResize = () => {
